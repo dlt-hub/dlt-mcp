@@ -1,2 +1,2 @@
-# `dlt` MCP server
+# dlt MCP server
 
