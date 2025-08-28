@@ -1,0 +1,50 @@
+[project]
+name = "dlt-mcp"
+description = "A Model Context Protocol (MCP) server for the Python library dlt."
+authors = [
+    { name = "dltHub" },
+    { name = "zilto", email = "68975210+zilto@users.noreply.github.com" }
+]
+readme = "README.md"
+license = { file = "LICENSE"}
+dynamic = ["version"]
+requires-python = ">=3.11"
+keywords = ["mcp", "etl", "elt", "data engineering", "ai"]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "dlt>=1.15.0",
+    "fastmcp>=2.11.3",
+]
+
+[project.urls]
+Documentation = "https://github.com/dlt-hub/dlt-mcp#README"
+Source = "https://github.com/dlt-hub/dlt-mcp"
+Issues = "https://github.com/dlt-hub/dlt-mcp/issues"
+
+[dependency-groups]
+dev = [
+    "griffe>=1.13.0",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.1",
+    "ruff>=0.12.11",
+    "ty>=0.0.1a19",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/dlt_mcp/**/*", "README.md", "LICENSE"]
+
+[tool.hatch.version]
+path = "src/dlt_mcp/__version__.py"

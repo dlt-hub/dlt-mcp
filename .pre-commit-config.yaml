@@ -1,0 +1,38 @@
+fail_fast: false
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.24.1
+    hooks:
+      - id: validate-pyproject
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.6
+    hooks:
+      # Run the linter
+      - id: ruff
+        args: [--fix]
+      # Run the formatter
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: ty
+        name: ty-check
+        entry: uv run ty check
+        language: system
+        types: [python]
+        pass_filenames: false
+
+  - repo: local
+    hooks:
+      - id: griffe
+        name: griffe-public-interface
+        entry: uv run griffe check src/
+        language: system
+        types: [python]
+        pass_filenames: false
