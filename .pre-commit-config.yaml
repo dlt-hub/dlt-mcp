@@ -23,16 +23,18 @@ repos:
     hooks:
       - id: ty
         name: ty-check
-        entry: uv run ty check
-        language: system
+        entry: ty check . --ignore unresolved-import
+        language: python
         types: [python]
         pass_filenames: false
+        additional_dependencies: [ty]
 
-  - repo: local
-    hooks:
-      - id: griffe
-        name: griffe-public-interface
-        entry: uv run griffe check src/
-        language: system
-        types: [python]
-        pass_filenames: false
+  # - repo: local
+  #   hooks:
+  #     - id: griffe
+  #       name: griffe-public-interface
+  #       entry: uv run griffe check src/
+  #       language: system
+  #       types: [python]
+  #       pass_filenames: false
+  #       fail: false

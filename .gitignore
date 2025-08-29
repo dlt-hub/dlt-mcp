@@ -10,8 +10,10 @@ wheels/
 .venv
 
 # others
+*.wal
 *.duckdb
 *.ducklake
+*.lancedb
 *.parquet
 *.json
 *.jsonl
