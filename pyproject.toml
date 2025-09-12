@@ -48,9 +48,3 @@ include = ["src/dlt_mcp/**/*", "README.md", "LICENSE"]
 
 [tool.hatch.version]
 path = "src/dlt_mcp/__version__.py"
-
-[publish.index.repos.main]
-url = "https://upload.pypi.org/legacy/"
-
-[publish.index.repos.test]
-url = "https://test.pypi.org/legacy/"
