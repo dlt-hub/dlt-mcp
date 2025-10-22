@@ -1,3 +1,8 @@
+"""This module defines functions for MCP tools associated with the core `dlt` library.
+
+It shouldn't depend on packages that aren't installed by `dlt`
+"""
+
 from typing import Any
 
 import dlt

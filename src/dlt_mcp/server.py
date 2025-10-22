@@ -1,23 +1,20 @@
 from __future__ import annotations
 
-from types import FunctionType
-
 from fastmcp import FastMCP
 
-import dlt_mcp._tools
-
-
-def get_available_tools() -> list[FunctionType]:
-    return [getattr(dlt_mcp._tools, name) for name in dlt_mcp._tools.__all__]
+from dlt_mcp._tools import TOOLS_REGISTRY
 
 
 def create_server() -> FastMCP:
-    tools = get_available_tools()
+    """Create an instance of the FastMCP server and register
+    tools, prompts, and resources on it.
+    """
+    tools = tuple(TOOLS_REGISTRY.values())
 
     server = FastMCP(
         name="dlt MCP",
         instructions="Helps you build with the dlt Python library.",
-        tools=tools,  # type: ignore[invalid-argument-type]
+        tools=tools,
     )
 
     return server
