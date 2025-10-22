@@ -11,6 +11,8 @@ permissions:
 jobs:
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
       docs: ${{ steps.filter.outputs.docs }}
@@ -19,7 +21,6 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: filter
         with:
-          token: ${{ github.token }}
           filters: |
             src:
               - 'src/**'
