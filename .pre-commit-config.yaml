@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: ty-check
         name: ty-check
-        entry: uv run --active ty check .
+        entry: uv run ty check .
         language: python
         pass_filenames: false
 

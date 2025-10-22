@@ -44,6 +44,13 @@ jobs:
 
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          activate-environment: true
 
       - name: Pre-commit hooks
-        uses: j178/prek-action@v1
+        run: |
+          uv sync --dev
+          uv prek install
+          uv prek run --all-files
