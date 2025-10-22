@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   changes:
+    name: Check changes
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -50,7 +51,10 @@ jobs:
           activate-environment: true
 
       - name: Pre-commit hooks
+        # ::group:: creates collapsible logs in GitHub actions WebUI
         run: |
+          echo "::group::Installing dependencies"
           uv sync --dev
+          echo ::group::
           uv run prek install
           uv run prek run --all-files
