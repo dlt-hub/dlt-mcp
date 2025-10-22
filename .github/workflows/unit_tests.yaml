@@ -14,7 +14,7 @@ jobs:
     permissions:
       pull-requests: read
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
+      src: ${{ steps.filter.outputs.src }}
       docs: ${{ steps.filter.outputs.docs }}
     steps:
       - uses: actions/checkout@v5
@@ -31,7 +31,8 @@ jobs:
 
   code_checks:
     needs: changes
-    if: ${{ steps.filter.outputs.src == 'true' }}
+    # this depends on the output of the `changes` job
+    if: ${{ needs.changes.outputs.src == 'true' }}
     name: Format, lint, and typecheck
     runs-on: ubuntu-latest
     steps:
