@@ -1,4 +1,4 @@
-name: Unit tests
+name: Core tests
 
 on:
   push:
@@ -52,5 +52,5 @@ jobs:
       - name: Pre-commit hooks
         run: |
           uv sync --dev
-          uv prek install
-          uv prek run --all-files
+          uv run prek install
+          uv run prek run --all-files
