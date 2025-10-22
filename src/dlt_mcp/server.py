@@ -15,6 +15,7 @@ def create_server() -> FastMCP:
         name="dlt MCP",
         instructions="Helps you build with the dlt Python library.",
         tools=tools,
+        # type: ignore[invalid-argument-type]
     )
 
     return server
