@@ -1,0 +1,72 @@
+name: Core tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: Check changes
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+      docs: ${{ steps.filter.outputs.docs }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            src:
+              - 'src/**'
+              - 'tests/**'
+              - 'pyproject.toml'
+            docs:
+              - 'docs/**'
+
+  code_checks:
+    needs: changes
+    # this depends on the output of the `changes` job
+    if: ${{ needs.changes.outputs.src == 'true' }}
+    name: Format, lint, and typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          activate-environment: true
+
+      - name: Install Python dependencies
+        run: |
+          uv sync --dev
+          uv run prek install
+
+      # type checking is run separately for better result readability
+      # run all hooks except type-checking
+      - name: Format & lint
+        run: |
+          uv run prek run --verbose --all-files --skip ty-check
+
+      # run only type-checking hook
+      - name: Type checking
+        run: |
+          uv run prek run --verbose --all-files ty-check
+
+
+      - name: Unit tests
+        run: |
+          uv run pytest tests/
