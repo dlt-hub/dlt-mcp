@@ -7,8 +7,8 @@ authors = [
 ]
 readme = "README.md"
 license = { file = "LICENSE"}
-dynamic = ["version"]
-requires-python = ">=3.11"
+version = "0.1.0"
+requires-python = ">=3.10"
 keywords = ["mcp", "etl", "elt", "data engineering", "ai"]
 classifiers = [
     "License :: OSI Approved :: Apache Software License",
@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "dlt>=1.15.0",
+    "dlt==1.17.1",
     "fastmcp>=2.11.3",
 ]
 
@@ -44,7 +44,4 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
-include = ["src/dlt_mcp/**/*", "README.md", "LICENSE"]
-
-[tool.hatch.version]
-path = "src/dlt_mcp/__version__.py"
+include = ["src/dlt_mcp/**", "README.md", "LICENSE"]
