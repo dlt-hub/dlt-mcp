@@ -31,9 +31,9 @@ jobs:
           list-files: shell
           filters: |
             authorized:
-              - modified: @(pyproject.toml|uv.lock)
+              - modified: '@(pyproject.toml|uv.lock)'
             unauthorized:
-              - !(@(pyproject.toml|uv.lock))
+              - '!(@(pyproject.toml|uv.lock))'
 
       - name: Exit early on unauthorized changes
         if: steps.changed.outputs.unauthorized == 'true'
