@@ -50,11 +50,18 @@ jobs:
           cache-dependency-glob: "uv.lock"
           activate-environment: true
 
-      - name: Pre-commit hooks
-        # ::group:: creates collapsible logs in GitHub actions WebUI
+      - name: Install Python dependencies
         run: |
-          echo "::group::Installing dependencies"
           uv sync --dev
-          echo ::group::
           uv run prek install
-          uv run prek run --all-files
+
+      # type checking is run separately for better result readability
+      # run all hooks except type-checking
+      - name: Format & lint
+        run: |
+          uv run prek run --all-files --skip ty-check
+
+      # run only type-checking hook
+      - name: Type checking
+        run: |
+          uv run prek run --all-files ty-check
