@@ -32,14 +32,3 @@ register_tool(get_table_schema)
 register_tool(execute_sql_query)
 register_tool(get_load_table)
 register_tool(get_pipeline_local_state)
-
-
-# conditionally register additional tools based on deps
-try:
-    from dlt_mcp._tools.knowledge import (
-        search_docs,
-    )
-
-    register_tool(search_docs)
-except Exception:
-    pass
