@@ -2,8 +2,6 @@ name: Publish release
 
 on:
   push:
-    branches:
-      - main
     # push a release when tagged with a semver
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
