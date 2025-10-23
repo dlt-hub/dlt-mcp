@@ -1,0 +1,45 @@
+name: Publish release
+
+on:
+  push:
+    # push a release when tagged with a semver
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: read
+
+jobs:
+  publish_release:
+    name: Publish package
+    runs-on: ubuntu-latest
+    outputs:
+      dlt_mcp_version: ${{ steps.get_version.outputs.marimo_version }}
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+          activate-environment: true
+
+      - name: Build dlt-mcp package
+        run: |
+          uv build
+          ls -lh dist/
+
+      - name: Publish to pypi
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish
+
+      - name: Install from pypi
+        # install dlt-mcp from pypi; step fails if cannot import `dlt_mcp`
+        # from official uv docs:  https://docs.astral.sh/uv/guides/package/#installing-your-package
+        run: uv run --with dlt-mcp --no-project -- python -c "import dlt_mcp"
