@@ -59,9 +59,9 @@ jobs:
       # run all hooks except type-checking
       - name: Format & lint
         run: |
-          uv run prek run --all-files --skip ty-check
+          uv run prek run --verbose --all-files --skip ty-check
 
       # run only type-checking hook
       - name: Type checking
         run: |
-          uv run prek run --all-files ty-check
+          uv run prek run --verbose --all-files ty-check
