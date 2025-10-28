@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "dlt==1.17.1",
+    "dlt>=1.17.1",
     "fastmcp>=2.11.3",
 ]
 
