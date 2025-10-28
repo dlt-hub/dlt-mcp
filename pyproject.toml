@@ -7,7 +7,7 @@ authors = [
 ]
 readme = "README.md"
 license = { file = "LICENSE"}
-version = "0.0.3"
+version = "0.0.4"
 requires-python = ">=3.10"
 keywords = ["mcp", "etl", "elt", "data engineering", "ai"]
 classifiers = [
