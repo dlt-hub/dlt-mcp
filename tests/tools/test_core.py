@@ -64,3 +64,50 @@ def test_get_table_schema_should_say_no_change():
     Expected no schema changes, but got:
     {diff.strip()}
     """
+
+
+def test_get_table_schema_with_same_version_hash():
+    pipeline_name = "schema_time_comparison_pipeline"
+    pipeline = dlt.pipeline(pipeline_name, destination="duckdb", dev_mode=True)
+
+    load_info = pipeline.run(user_data(False))
+    version_hash = load_info.load_packages[0].schema_hash
+    diff = get_table_schema_changes(pipeline_name, "users", version_hash)
+
+    assert diff.strip() == "There has been no change in the schema", f"""
+    Expected no schema changes, but got:
+    {diff.strip()}
+    """
+
+
+def test_get_table_schema_with_different_version_hash():
+    pipeline_name = "schema_time_comparison_pipeline"
+    pipeline = dlt.pipeline(pipeline_name, destination="duckdb", dev_mode=True)
+
+    load_info = pipeline.run(user_data(False))
+    version_hash = load_info.load_packages[0].schema_hash
+
+    pipeline.run(user_data(True))
+    diff = get_table_schema_changes(pipeline_name, "users", version_hash)
+
+    expected_diff_message = """--- Current Schema
++++ Previous Schema
+@@ -6,6 +6,7 @@
+              '_dlt_load_id': {'data_type': 'text',
+                               'name': '_dlt_load_id',
+                               'nullable': False},
++             'age': {'data_type': 'bigint', 'name': 'age', 'nullable': True},
+              'email': {'data_type': 'text', 'name': 'email', 'nullable': True},
+              'id': {'data_type': 'bigint', 'name': 'id', 'nullable': True},
+              'name': {'data_type': 'text', 'name': 'name', 'nullable': True}},
+    """
+
+    assert diff.strip() == expected_diff_message.strip(), f"""
+    Expected and actual schema differences do not match.
+    
+    Expected:
+    {expected_diff_message.strip()}
+    
+    Actual:
+    {diff.strip()}
+    """

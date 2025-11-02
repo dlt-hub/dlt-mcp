@@ -6,7 +6,7 @@ It shouldn't depend on packages that aren't installed by `dlt`
 from difflib import unified_diff
 import json
 import pprint
-from typing import Any
+from typing import Any, Optional
 
 import dlt
 from dlt.common.schema.typing import LOADS_TABLE_NAME
@@ -14,6 +14,7 @@ from dlt.common.pipeline import TPipelineState
 from dlt.common.schema.typing import TTableSchema
 from dlt.common.pipeline import get_dlt_pipelines_dir
 from dlt.common.storages.file_storage import FileStorage
+import pandas as pd
 
 
 def list_pipelines() -> list[str]:
@@ -73,14 +74,16 @@ def get_pipeline_local_state(pipeline_name: str) -> TPipelineState:
     return pipeline.state
 
 
-def get_table_schema_changes(pipeline_name: str, table_name: str) -> str:
+def get_table_schema_changes(
+    pipeline_name: str, table_name: str, another_version_hash: Optional[str] = None
+) -> str:
     """Retrieve the diff between versions of tables compared to it's previous version"""
     pipeline = dlt.attach(pipeline_name)
 
     dataset = pipeline.dataset()
-    schemas = dataset.query(
-        "select schema from _dlt_version order by inserted_at desc limit 2"
-    ).df()
+    schemas = _get_schemas(
+        another_version_hash, pipeline.default_schema.version_hash, dataset
+    )
 
     if len(schemas) < 2:
         return "There has been no change in the schema"
@@ -88,6 +91,20 @@ def get_table_schema_changes(pipeline_name: str, table_name: str) -> str:
     previous_schema = _load_schema_for_table(table_name, schemas.iloc[1]["schema"])
 
     return _dict_diff(current_schema, previous_schema, "Previous Schema")
+
+
+def _get_schemas(another_version_hash, version_hash, dataset) -> pd.DataFrame:
+    if another_version_hash:
+        version_hashes = [version_hash, another_version_hash]
+        # Properly format the list for SQL IN clause
+        quoted_hashes = [f"'{h}'" for h in version_hashes]
+        hashes_str = ",".join(quoted_hashes)
+        return dataset.query(
+            f"select schema from _dlt_version where version_hash in ({hashes_str}) order by inserted_at desc"
+        ).df()
+    return dataset.query(
+        "select schema from _dlt_version order by inserted_at desc limit 2"
+    ).df()
 
 
 def _load_schema_for_table(table_name, schema):
