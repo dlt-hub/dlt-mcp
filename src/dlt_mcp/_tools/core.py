@@ -79,13 +79,14 @@ def get_table_schema_changes(pipeline_name: str, table_name: str) -> str:
 
     dataset = pipeline.dataset()
     schemas = dataset.query(
-        f"select schema from _dlt_version order by inserted_at desc limit 2"
+        "select schema from _dlt_version order by inserted_at desc limit 2"
     ).df()
 
     current_schema = _load_schema_for_table(table_name, schemas.iloc[0]["schema"])
     previous_schema = _load_schema_for_table(table_name, schemas.iloc[1]["schema"])
 
     return _dict_diff(current_schema, previous_schema, "Previous Schema")
+
 
 def _load_schema_for_table(table_name, schema):
     schema_dict = json.loads(schema).get("tables").get(table_name)
@@ -96,10 +97,12 @@ def _dict_diff(schema_dict, another_schema_dict, compared_to: str) -> str:
     # Convert dictionaries to string representation
     str1 = pprint.pformat(schema_dict)
     str2 = pprint.pformat(another_schema_dict)
-    
+
     # Split into lines
     lines1 = str1.splitlines(keepends=True)
     lines2 = str2.splitlines(keepends=True)
-    
+
     # Generate diff
-    return ''.join(unified_diff(lines2, lines1, fromfile='Current Schema', tofile=compared_to))
+    return "".join(
+        unified_diff(lines2, lines1, fromfile="Current Schema", tofile=compared_to)
+    )
