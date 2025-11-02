@@ -22,6 +22,7 @@ def test_expected_tools_in_all_clause():
         "get_pipeline_local_state",
         "search_code",
         "search_docs",
+        "get_table_schema_changes",
     ]
 
     assert len(TOOLS_REGISTRY) == len(expected_tool_names)
@@ -39,6 +40,7 @@ def test_expected_tools_are_registered():
         "get_pipeline_local_state",
         "search_code",
         "search_docs",
+        "get_table_schema_changes",
     ]
 
     mcp_server = create_server()
