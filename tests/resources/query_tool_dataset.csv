@@ -1,0 +1,7 @@
+tool,query
+list_pipelines,what pipelines do I have available?
+list_pipelines,can you list all the pipelines I have?
+list_pipelines,available pipelines
+list_pipelines,give me a list of all the pipelines configured in the DLT system
+list_tables,what tables are available in the sales_data pipeline
+list_tables,fetch all output tables from the analytics pipeline
