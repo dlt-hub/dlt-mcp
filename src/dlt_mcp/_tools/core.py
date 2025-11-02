@@ -9,12 +9,11 @@ import pprint
 from typing import Any, Optional
 
 import dlt
-from dlt.common.schema.typing import LOADS_TABLE_NAME
+from dlt.common.schema.typing import LOADS_TABLE_NAME, VERSION_TABLE_NAME
 from dlt.common.pipeline import TPipelineState
 from dlt.common.schema.typing import TTableSchema
 from dlt.common.pipeline import get_dlt_pipelines_dir
 from dlt.common.storages.file_storage import FileStorage
-import pandas as pd
 
 
 def list_pipelines() -> list[str]:
@@ -62,7 +61,7 @@ def get_load_table(pipeline_name: str) -> list[dict[str, Any]]:
     pipeline = dlt.attach(pipeline_name)
     dataset = pipeline.dataset()
     load_table = dataset(f"SELECT * FROM {LOADS_TABLE_NAME};").fetchall()
-    columns = list(dataset.schema.tables[LOADS_TABLE_NAME]["columns"])  # type: ignore
+    columns = list(dataset.schema.tables[LOADS_TABLE_NAME].get("columns", []))
     return [dict(zip(columns, row)) for row in load_table]
 
 
@@ -82,29 +81,30 @@ def get_table_schema_changes(
 
     dataset = pipeline.dataset()
     schemas = _get_schemas(
-        another_version_hash, pipeline.default_schema.version_hash, dataset
+        pipeline.default_schema.version_hash, another_version_hash, dataset
     )
 
     if len(schemas) < 2:
         return "There has been no change in the schema"
-    current_schema = _load_schema_for_table(table_name, schemas.iloc[0]["schema"])
-    previous_schema = _load_schema_for_table(table_name, schemas.iloc[1]["schema"])
+    current_schema = _load_schema_for_table(table_name, schemas[0])
+    previous_schema = _load_schema_for_table(table_name, schemas[1])
 
     return _dict_diff(current_schema, previous_schema, "Previous Schema")
 
 
-def _get_schemas(another_version_hash, version_hash, dataset) -> pd.DataFrame:
-    if another_version_hash:
-        version_hashes = [version_hash, another_version_hash]
-        # Properly format the list for SQL IN clause
-        quoted_hashes = [f"'{h}'" for h in version_hashes]
-        hashes_str = ",".join(quoted_hashes)
-        return dataset.query(
-            f"select schema from _dlt_version where version_hash in ({hashes_str}) order by inserted_at desc"
-        ).df()
-    return dataset.query(
-        "select schema from _dlt_version order by inserted_at desc limit 2"
-    ).df()
+def _get_schemas(version_hash, another_version_hash, dataset) -> list[str]:
+    table = dataset.table(VERSION_TABLE_NAME).select("schema")
+    version_hashes = [version_hash, another_version_hash]
+    query_with_version_hash = table.where(f"version_hash in {version_hashes}").order_by(
+        "inserted_at", "desc"
+    )
+
+    query_without_version_hash = table.order_by("inserted_at", "desc").limit(2)
+    executable_query = (
+        query_with_version_hash if another_version_hash else query_without_version_hash
+    )
+    data = executable_query.fetchall()
+    return [d[0] for d in data]
 
 
 def _load_schema_for_table(table_name, schema):
