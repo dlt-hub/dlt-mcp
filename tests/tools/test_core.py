@@ -46,3 +46,21 @@ def test_get_table_schema_changes_when_schema_has_changed():
     Actual:
     {diff.strip()}
     """
+
+
+def test_get_table_schema_should_say_no_change():
+    pipeline_name = "no_change_pipeline"
+    pipeline = dlt.pipeline(pipeline_name, destination="duckdb", dev_mode=True)
+
+    # Run the resource twice with the same schema
+    pipeline.run(user_data(False))
+    pipeline.run(user_data(False))
+
+    # Get schema changes
+    diff = get_table_schema_changes(pipeline_name, "users")
+
+    # Assert that there are no schema changes
+    assert diff.strip() == "There has been no change in the schema", f"""
+    Expected no schema changes, but got:
+    {diff.strip()}
+    """
