@@ -37,6 +37,7 @@ dev = [
     "pytest>=8.4.1",
     "ruff>=0.12.11",
     "rust-just>=1.43.0",
+    "sentence-transformers>=5.1.2",
     "ty>=0.0.1a19",
 ]
 
