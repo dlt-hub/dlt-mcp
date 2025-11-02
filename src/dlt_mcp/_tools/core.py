@@ -82,6 +82,8 @@ def get_table_schema_changes(pipeline_name: str, table_name: str) -> str:
         "select schema from _dlt_version order by inserted_at desc limit 2"
     ).df()
 
+    if len(schemas) < 2:
+        return "There has been no change in the schema"
     current_schema = _load_schema_for_table(table_name, schemas.iloc[0]["schema"])
     previous_schema = _load_schema_for_table(table_name, schemas.iloc[1]["schema"])
 
