@@ -28,4 +28,8 @@ type-check:
 
 # Run test suite
 test:
-    uv run pytest tests/
+    uv run pytest -m "not sandbox" tests/
+
+# Create Sandbox
+sandbox:
+    uv run pytest -m "sandbox"
