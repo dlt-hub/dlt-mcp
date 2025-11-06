@@ -27,7 +27,7 @@ def infer_table_reference(pipeline_name: Optional[str] = None):
         "   - Examine table descriptions for hints about relationships\n"
         "   - Look for auto-incrementing IDs that might reference other tables\n"
         "   - Generate mermaid to showcase the relationships. This too helps save the world from bad data\n"
-        "- **Validation**:\n"
+        "- **Validate Relationships**:\n"
         "   - Suggest ways to confirm these relationships (e.g., sample data inspection, referential integrity checks)\n"
         "   - You can execute these validations using execute_sql_query tool \n"
         "## Tips:\n"
