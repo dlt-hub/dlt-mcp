@@ -23,11 +23,11 @@ def generate_products() -> List[Dict[str, Any]]:
     for i in range(100):
         products.append(
             {
-                "product_id": i + 1,
-                "product_name": random.choice(product_names),
+                "id": i + 1,
+                "name": random.choice(product_names),
                 "category": random.choice(categories),
                 "price": round(random.uniform(20.0, 1000.0), 2),
-                "stock_quantity": random.randint(0, 100),
+                "qty": random.randint(0, 100),
                 "created_at": pendulum.now()
                 .subtract(days=random.randint(0, 365))
                 .isoformat(),
@@ -62,15 +62,15 @@ def generate_customers() -> List[Dict[str, Any]]:
     for i in range(50):
         customers.append(
             {
-                "customer_id": i + 1,
+                "_id": i + 1,
                 "first_name": random.choice(first_names),
                 "last_name": random.choice(last_names),
                 "email": f"user{i + 1}@example.com",
                 "city": random.choice(cities),
-                "signup_date": pendulum.now()
+                "date": pendulum.now()
                 .subtract(days=random.randint(0, 365))
                 .isoformat(),
-                "total_spent": round(random.uniform(0.0, 5000.0), 2),
+                "moanie": round(random.uniform(0.0, 5000.0), 2),
             }
         )
     return customers
@@ -91,15 +91,15 @@ def generate_orders(
 
         orders.append(
             {
-                "order_id": i + 1,
-                "customer_id": customer["customer_id"],
-                "product_id": product["product_id"],
+                "_id": i + 1,
+                "customer": customer["_id"],
+                "product": product["id"],
                 "quantity": quantity,
-                "unit_price": product["price"],
-                "total_amount": round(product["price"] * quantity, 2),
-                "order_date": order_date.isoformat(),
+                "prices": product["price"],
+                "total": round(product["price"] * quantity, 2),
+                "date": order_date.isoformat(),
                 "status": random.choice(order_status),
-                "shipping_address": f"{random.randint(1, 1000)} {random.choice(['Main St', 'Oak Ave', 'Pine Rd'])}, {random.choice(['New York', 'Los Angeles', 'Chicago'])}",
+                "address": f"{random.randint(1, 1000)} {random.choice(['Main St', 'Oak Ave', 'Pine Rd'])}, {random.choice(['New York', 'Los Angeles', 'Chicago'])}",
             }
         )
     return orders
@@ -112,26 +112,24 @@ def generate_returns(orders: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
     # Only some orders will have returns
     order_ids_with_returns = random.sample(
-        [order["order_id"] for order in orders], k=min(30, len(orders))
+        [order["_id"] for order in orders], k=min(30, len(orders))
     )
 
     for order_id in order_ids_with_returns:
-        order = next((o for o in orders if o["order_id"] == order_id), None)
+        order = next((o for o in orders if o["_id"] == order_id), None)
         if order:
             returns.append(
                 {
-                    "return_id": len(returns) + 1,
-                    "order_id": order_id,
-                    "customer_id": order["customer_id"],
-                    "product_id": order["product_id"],
-                    "quantity": random.randint(1, order["quantity"]),
-                    "reason": random.choice(return_reasons),
+                    "_id": len(returns) + 1,
+                    "some_order_id": order_id,
+                    "cust_id": order["customer"],
+                    "product": order["product"],
+                    "qty": random.randint(1, order["quantity"]),
+                    "why": random.choice(return_reasons),
                     "return_date": pendulum.now()
                     .subtract(days=random.randint(1, 30))
                     .isoformat(),
-                    "refund_amount": round(
-                        random.uniform(10.0, order["total_amount"]), 2
-                    ),
+                    "refund_amount": round(random.uniform(10.0, order["prices"]), 2),
                     "status": random.choice(["processed", "pending", "refunded"]),
                 }
             )
