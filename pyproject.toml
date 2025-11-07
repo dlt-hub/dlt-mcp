@@ -32,6 +32,7 @@ Issues = "https://github.com/dlt-hub/dlt-mcp/issues"
 
 [dependency-groups]
 dev = [
+    "dlt[duckdb]>=1.17.1",
     "griffe>=1.13.0",
     "prek>=0.2.10",
     "pytest>=8.4.1",
