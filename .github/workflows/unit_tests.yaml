@@ -50,7 +50,7 @@ jobs:
           cache-dependency-glob: "uv.lock"
           activate-environment: true
 
-      - name: Install Python dependencies
+      - name: Install Python core dependencies
         run: |
           uv sync --dev
           uv run prek install
@@ -66,6 +66,8 @@ jobs:
         run: |
           uv run prek run --verbose --all-files ty-check
 
+      - name: Install Python extra dependencies
+        run: uv sync --extra search
 
       - name: Unit tests
         run: |
