@@ -4,7 +4,7 @@ default:
 
 # Setup Python environment
 setup:
-    uv sync --dev
+    uv sync --dev --extra search
 
 # Run pre-commit hooks
 pre-commit:

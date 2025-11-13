@@ -1,3 +1,5 @@
+"""Utilities to ingest `dlt` documentation and code to power the MCP search tools."""
+
 import zipfile
 import tempfile
 from pathlib import Path
@@ -12,7 +14,9 @@ from lancedb.pydantic import LanceModel, Vector
 from chonkie import RecursiveChunker, BaseChunker, CodeChunker
 from requests.exceptions import HTTPError
 
-
+# TODO figure out a mechanism to retrieve the user's dlt version
+# and set it at server init.
+DLT_VERSION = "1.18.1"
 DLT_DOCS_RELATIVE_PATH = ".dlt/mcp"
 DLT_DOCS_TABLE_NAME = "pages"
 DLT_DOCS_CHUNKS_TABLE_NAME = "page_chunks"
@@ -311,5 +315,5 @@ def _ingest_code(dlt_version: str, repo: str = _GITHUB_REPOSITORY_URL):
 
 if __name__ == "__main__":
     # TODO this can be optimized
-    _ingest_code("1.8.1")
-    _ingest_docs("1.8.1")
+    _ingest_docs(DLT_VERSION)
+    _ingest_code(DLT_VERSION)

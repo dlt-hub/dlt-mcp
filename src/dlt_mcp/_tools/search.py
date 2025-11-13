@@ -2,13 +2,11 @@ from typing import Literal
 
 from dlt_mcp._utilities.ingestion import (
     db_con,
+    DLT_VERSION,
     DLT_DOCS_CHUNKS_TABLE_NAME,
     DLT_CODE_CHUNKS_TABLE_NAME,
 )
 
-# TODO figure out a mechanism to retrieve the user's dlt version
-# and set it at server init.
-DLT_VERSION = "1.18.1"
 
 # TODO add mechanism to ingest docs on first launch
 # TODO optimized docs could be released as a zip on the `dlt-mcp` repo
@@ -47,10 +45,12 @@ def search_code(query: str, file_path: str | None = None) -> list[dict]:
     table = db.open_table(DLT_CODE_CHUNKS_TABLE_NAME)
 
     retrieval_query = (
-        table.search(query, query_type="fts")
-        # .where(f'''file_path = "{file_path}"''')
-        .select(["text", "file_path"])
-        .limit(3)
+        table.search(query, query_type="fts").select(["text", "file_path"]).limit(3)
     )
+    if file_path:
+        retrieval_query = retrieval_query.where(
+            f"file_path = '{file_path}'", prefilter=True
+        )
+
     results = retrieval_query.to_list()
     return results
