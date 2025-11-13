@@ -5,6 +5,7 @@ import tempfile
 from pathlib import Path
 from typing import Callable, Iterator
 
+import chonkie.logger
 import lancedb
 import numpy as np
 import requests
@@ -25,6 +26,9 @@ _DOCS_PATH_SEGMENT = "docs/website/docs/"
 _CODE_PATH_SEGMENT = "dlt/"
 _GITHUB_REPOSITORY_URL = "https://github.com/dlt-hub/dlt"
 _GITHUB_REPOSITORY_API_URL = "https://api.github.com/repos/dlt-hub/dlt"
+
+
+chonkie.logger.disable_logging()
 
 
 @register("model2vec")
@@ -104,7 +108,6 @@ def _is_code_file(file_name: str) -> bool:
     Returns `False` if the file is not a code file, `True` otherwise.
     """
     if _CODE_PATH_SEGMENT not in file_name:
-        print(file_name)
         return False
 
     if not file_name.endswith(".py"):
@@ -311,6 +314,27 @@ def _ingest_code(dlt_version: str, repo: str = _GITHUB_REPOSITORY_URL):
     _code_chunks = code_chunks(_code_files, _code_chunker)
     _code_chunks_table = code_chunks_table(_db_con, _code_chunks)
     return _code_chunks_table
+
+
+def _maybe_ingest_docs_and_code(dlt_version: str):
+    """Ingest docs and code if the local LanceDB database is not found
+    of if tables are missing."""
+    local_db_path = _get_lancedb_path(dlt_version)
+    if not local_db_path.exists():
+        _ingest_docs(dlt_version)
+        _ingest_code(dlt_version)
+        return
+
+    all_tables = list(local_db_path.iterdir())
+    if not any(
+        f"{DLT_DOCS_CHUNKS_TABLE_NAME}.lance" == table.name for table in all_tables
+    ):
+        _ingest_docs(dlt_version)
+
+    if not any(
+        f"{DLT_CODE_CHUNKS_TABLE_NAME}.lance" == table.name for table in all_tables
+    ):
+        _ingest_code(dlt_version)
 
 
 if __name__ == "__main__":
