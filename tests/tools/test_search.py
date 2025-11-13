@@ -25,9 +25,12 @@ def module_tmp_path(tmp_path_factory) -> pathlib.Path:
 # this fixture must `yield` to ensure the `with patch` context is
 # preserved in the test function
 @pytest.fixture(scope="module")
-def page_chunks_table(module_tmp_path: pathlib.Path) -> Iterator[lancedb.Table]:
+def populated_local_db(module_tmp_path: pathlib.Path) -> Iterator[lancedb.Table]:
+    # the two tables need to be populated from the same fixture to avoid
+    # conflicts with the utility `_maybe_ingest_docs_and_code`.
     with patch("pathlib.Path.home", return_value=module_tmp_path):
         db_con = ingestion.db_con(ingestion.DLT_VERSION)
+        # ingest docs
         docs_chunks = [
             dict(
                 id=str(uuid.uuid4()),
@@ -44,15 +47,9 @@ def page_chunks_table(module_tmp_path: pathlib.Path) -> Iterator[lancedb.Table]:
             )
             for i in range(10)
         ]
-        yield ingestion.page_chunks_table(db_con, docs_chunks)
+        ingestion.page_chunks_table(db_con, docs_chunks)
 
-
-# this fixture must `yield` to ensure the `with patch` context is
-# preserved in the test function
-@pytest.fixture(scope="module")
-def code_chunks_table(module_tmp_path: pathlib.Path) -> Iterator[lancedb.Table]:
-    with patch("pathlib.Path.home", return_value=module_tmp_path):
-        db_con = ingestion.db_con(ingestion.DLT_VERSION)
+        # ingest code
         code_chunks = [
             dict(
                 id=str(uuid.uuid4()),
@@ -70,12 +67,15 @@ def code_chunks_table(module_tmp_path: pathlib.Path) -> Iterator[lancedb.Table]:
             )
             for i in range(10)
         ]
-        yield ingestion.code_chunks_table(db_con, code_chunks)
+        ingestion.code_chunks_table(db_con, code_chunks)
+
+        yield db_con
 
 
 @pytest.mark.parametrize("mode", ["full_text", "hybrid", "vector"])
 def test_docs_search(
-    page_chunks_table: lancedb.Table, mode: Literal["full_text", "hybrid", "vector"]
+    populated_local_db: lancedb.LanceDBConnection,
+    mode: Literal["full_text", "hybrid", "vector"],
 ):
     if mode == "full_text":
         scoring_field = "_score"
@@ -115,7 +115,9 @@ def test_docs_search(
 
 # `file_path` matches the loaded mock data.
 @pytest.mark.parametrize("file_path", [None, "dlt/0/test.md"])
-def test_code_search(code_chunks_table: lancedb.Table, file_path: str | None):
+def test_code_search(
+    populated_local_db: lancedb.LanceDBConnection, file_path: str | None
+):
     results = search.search_code("test", file_path=file_path)
 
     # exact number of retrieved results
