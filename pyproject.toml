@@ -40,6 +40,12 @@ dev = [
     "ty>=0.0.1a19",
 ]
 
+[project.optional-dependencies]
+search = [
+    "chonkie[code,model2vec]>=1.4.1",
+    "lancedb>=0.25.3",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

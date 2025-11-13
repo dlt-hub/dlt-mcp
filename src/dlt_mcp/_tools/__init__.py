@@ -32,3 +32,12 @@ register_tool(get_table_schema)
 register_tool(execute_sql_query)
 register_tool(get_load_table)
 register_tool(get_pipeline_local_state)
+
+
+try:
+    from dlt_mcp._tools.search import search_docs, search_code
+
+    register_tool(search_docs)
+    register_tool(search_code)
+except ImportError:
+    pass
