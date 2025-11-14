@@ -1,6 +1,4 @@
 import dlt
-import duckdb
-import pytest
 from dlt_mcp._tools.core import get_table_schema_changes
 
 
@@ -17,14 +15,9 @@ def user_data(updated_user: bool):
     ]
 
 
-@pytest.fixture(autouse=True)
-def duckdb_destination():
-    return dlt.destinations.duckdb(duckdb.connect(":memory:"))
-
-
-def test_get_table_schema_changes_when_schema_has_changed(duckdb_destination):
+def test_get_table_schema_changes_when_schema_has_changed():
     pipeline_name = "table_schema_change_pipeline"
-    pipeline = dlt.pipeline(pipeline_name, destination=duckdb_destination)
+    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
 
     pipeline.run(user_data(False))
     pipeline.run(user_data(True))
@@ -54,9 +47,9 @@ def test_get_table_schema_changes_when_schema_has_changed(duckdb_destination):
     """
 
 
-def test_get_table_schema_should_say_no_change(duckdb_destination):
+def test_get_table_schema_should_say_no_change():
     pipeline_name = "no_change_pipeline"
-    pipeline = dlt.pipeline(pipeline_name, destination=duckdb_destination)
+    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
 
     # Run the resource twice with the same schema
     pipeline.run(user_data(False))
@@ -72,9 +65,9 @@ def test_get_table_schema_should_say_no_change(duckdb_destination):
     """
 
 
-def test_get_table_schema_with_same_version_hash(duckdb_destination):
+def test_get_table_schema_with_same_version_hash():
     pipeline_name = "schema_time_comparison_pipeline"
-    pipeline = dlt.pipeline(pipeline_name, destination=duckdb_destination)
+    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
 
     load_info = pipeline.run(user_data(False))
     version_hash = load_info.load_packages[0].schema_hash
@@ -86,9 +79,9 @@ def test_get_table_schema_with_same_version_hash(duckdb_destination):
     """
 
 
-def test_get_table_schema_with_different_version_hash(duckdb_destination):
+def test_get_table_schema_with_different_version_hash():
     pipeline_name = "schema_time_comparison_pipeline"
-    pipeline = dlt.pipeline(pipeline_name, destination=duckdb_destination)
+    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
 
     load_info = pipeline.run(user_data(False))
     version_hash = load_info.load_packages[0].schema_hash
