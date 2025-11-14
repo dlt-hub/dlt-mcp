@@ -99,18 +99,22 @@ def get_table_schema_changes(
         return _no_change_msg
 
     return _dict_diff(
-        current_schema.tables.get(table_name),
+        current_schema.tables.get(table_name, {}),
         _load_schema_for_table(table_name, another_schema[0]),
         "Previous Schema",
     )
 
 
-def _load_schema_for_table(table_name, schema):
+def _load_schema_for_table(table_name: str, schema: str):
     schema_dict = json.loads(schema).get("tables").get(table_name)
     return schema_dict
 
 
-def _dict_diff(schema_dict, another_schema_dict, compared_to: str) -> str:
+def _dict_diff(
+    schema_dict: dict | TTableSchema,
+    another_schema_dict: dict | TTableSchema,
+    compared_to: str,
+) -> str:
     # Convert dictionaries to string representation
     str1 = pprint.pformat(schema_dict)
     str2 = pprint.pformat(another_schema_dict)
