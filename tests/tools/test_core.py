@@ -1,5 +1,5 @@
 import dlt
-from dlt_mcp._tools.core import get_table_schema_changes
+from dlt_mcp._tools.core import _dict_diff, get_table_schema_changes
 
 
 @dlt.resource(table_name="users")
@@ -110,3 +110,27 @@ def test_get_table_schema_with_different_version_hash():
     Actual:
     {diff.strip()}
     """
+
+
+def test_dict_diff_when_different_dicts_are_provided():
+    expected_diff_message = (
+        "--- Current Schema\n+++ different_dict\n@@ -1 +1 @@\n-{'b': 0}+{'a': 0}"
+    )
+    output = _dict_diff({"a": 0}, {"b": 0}, "different_dict")
+
+    assert output.strip() == expected_diff_message.strip(), f"""
+    Expected and actual schema differences do not match.
+    
+    Expected:
+    {expected_diff_message.strip()}
+    
+    Actual:
+    {output.strip()}
+    """
+
+
+def test_dict_diff_when_same_dicts_are_provided():
+    expected_diff_message = ""
+    output = _dict_diff({"a": 0}, {"a": 0}, "same_dict")
+
+    assert output.strip() == expected_diff_message
