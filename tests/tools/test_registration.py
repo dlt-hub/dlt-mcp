@@ -20,6 +20,7 @@ def test_expected_tools_in_all_clause():
         "execute_sql_query",
         "get_load_table",
         "get_pipeline_local_state",
+        "get_table_schema_changes",
     ]
 
     assert len(TOOLS_REGISTRY) == len(expected_tool_names)
@@ -35,6 +36,7 @@ def test_expected_tools_are_registered():
         "execute_sql_query",
         "get_load_table",
         "get_pipeline_local_state",
+        "get_table_schema_changes",
     ]
 
     mcp_server = create_server()
