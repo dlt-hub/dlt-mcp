@@ -9,7 +9,7 @@ import pprint
 from typing import Any, Optional
 
 import dlt
-from dlt.common.schema.typing import LOADS_TABLE_NAME, VERSION_TABLE_NAME
+from dlt.common.schema.typing import LOADS_TABLE_NAME
 from dlt.common.pipeline import TPipelineState
 from dlt.common.schema.typing import TTableSchema
 from dlt.common.pipeline import get_dlt_pipelines_dir
@@ -77,34 +77,32 @@ def get_table_schema_changes(
     pipeline_name: str, table_name: str, another_version_hash: Optional[str] = None
 ) -> str:
     """Retrieve the diff between versions of tables compared to it's previous version"""
+    _no_change_msg = "There has been no change in the schema"
+
     pipeline = dlt.attach(pipeline_name)
+    current_schema = pipeline.default_schema
+    if not another_version_hash:
+        another_version_hash = current_schema.previous_hashes[0]
+
+    if another_version_hash == current_schema.version_hash:
+        return _no_change_msg
 
     dataset = pipeline.dataset()
-    schemas = _get_schemas(
-        pipeline.default_schema.version_hash, another_version_hash, dataset
+
+    another_schema = (
+        dataset.table(current_schema.version_table_name)
+        .where("version_hash", "eq", another_version_hash)
+        .select("schema")
+    ).fetchone()
+
+    if not another_schema:
+        return _no_change_msg
+
+    return _dict_diff(
+        current_schema.tables.get(table_name),
+        _load_schema_for_table(table_name, another_schema[0]),
+        "Previous Schema",
     )
-
-    if len(schemas) < 2:
-        return "There has been no change in the schema"
-    current_schema = _load_schema_for_table(table_name, schemas[0])
-    previous_schema = _load_schema_for_table(table_name, schemas[1])
-
-    return _dict_diff(current_schema, previous_schema, "Previous Schema")
-
-
-def _get_schemas(version_hash, another_version_hash, dataset) -> list[str]:
-    table = dataset.table(VERSION_TABLE_NAME).select("schema")
-    version_hashes = [version_hash, another_version_hash]
-    query_with_version_hash = table.where(f"version_hash in {version_hashes}").order_by(
-        "inserted_at", "desc"
-    )
-
-    query_without_version_hash = table.order_by("inserted_at", "desc").limit(2)
-    executable_query = (
-        query_with_version_hash if another_version_hash else query_without_version_hash
-    )
-    data = executable_query.fetchall()
-    return [d[0] for d in data]
 
 
 def _load_schema_for_table(table_name, schema):
