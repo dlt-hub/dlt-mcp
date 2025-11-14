@@ -66,7 +66,7 @@ def test_get_table_schema_should_say_no_change():
 
 
 def test_get_table_schema_with_same_version_hash():
-    pipeline_name = "schema_time_comparison_pipeline"
+    pipeline_name = "same_schema_version_hash"
     pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
 
     load_info = pipeline.run(user_data(False))
