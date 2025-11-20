@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "dlt[duckdb]>=1.17.1",
+    "dlt>=1.17.1",
     "fastmcp>=2.11.3",
 ]
 
@@ -44,6 +44,9 @@ dev = [
 search = [
     "chonkie[code,model2vec]>=1.4.2",
     "lancedb>=0.25.3",
+]
+duckdb = [
+    "dlt[duckdb]>=1.17.1",
 ]
 
 [build-system]

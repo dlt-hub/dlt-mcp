@@ -50,9 +50,9 @@ jobs:
           cache-dependency-glob: "uv.lock"
           activate-environment: true
 
-      - name: Install Python core dependencies
+      - name: Install Python dependencies
         run: |
-          uv sync --dev --extra search
+          uv sync --dev --extra search --extra duckdb
           uv run prek install
 
       # type checking is run separately for better result readability

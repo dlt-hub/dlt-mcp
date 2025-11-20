@@ -1,20 +1,42 @@
+import pathlib
+from typing import Generator
+
 import pytest
-import glob
-import os
-
-# list of duckdb files to not remove
-DO_NOT_REMOVE_LIST = []
+import dlt
 
 
-@pytest.fixture(scope="session", autouse=True)
-def cleanup_duckdb_files():
-    """Fixture to clean up *.duckdb files after all tests in a session run."""
-    # Teardown: This code runs after all tests in the session have finished
-    print("\n--- Pytest session finished, cleaning up generated *.duckdb files ---")
-    files = glob.glob("*.duckdb")
-    for file in [f for f in files if f not in DO_NOT_REMOVE_LIST]:
-        try:
-            os.remove(file)
-            print(f"Deleted generated file: {file}")
-        except OSError as e:
-            print(f"Error deleting file {file}: {e}")
+@pytest.fixture(scope="module")
+def module_tmp_path(tmp_path_factory) -> pathlib.Path:
+    """Temporary directory that persist for the lifetime of test `.py` file."""
+    return tmp_path_factory.mktemp("pytest_dlt-mcp")
+
+
+@pytest.fixture(scope="function")
+def tmp_duckdb_destination(
+    tmp_path: pathlib.Path,
+) -> Generator[dlt.destinations.duckdb, None, None]:
+    """Function-scoped temporary duckdb destination."""
+    tmp_duckdb_path = tmp_path / "data.duckdb"
+    dest = dlt.destinations.duckdb(str(tmp_duckdb_path))
+    yield dest
+
+
+@pytest.fixture(scope="function")
+def tmp_pipelines_dir(tmp_path: pathlib.Path) -> pathlib.Path:
+    return tmp_path / "pipelines_dir"
+
+
+@pytest.fixture(scope="function")
+def tmp_pipeline(
+    request,
+    tmp_duckdb_destination: dlt.destinations.duckdb,
+    tmp_pipelines_dir: pathlib.Path,
+) -> dlt.Pipeline:
+    """Temporary pipeline with a name that matches the test name. It has its
+    own `pipelines_dir` and duckdb destination instance.
+    """
+    return dlt.pipeline(
+        pipeline_name=request.node.name,
+        pipelines_dir=str(tmp_pipelines_dir),
+        destination=tmp_duckdb_destination,
+    )
