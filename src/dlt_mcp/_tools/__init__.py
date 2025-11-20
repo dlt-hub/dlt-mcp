@@ -23,7 +23,7 @@ from dlt_mcp._tools.core import (  # noqa: E402
     execute_sql_query,
     get_load_table,
     get_pipeline_local_state,
-    get_table_schema_changes,
+    get_table_schema_diff,
 )
 
 
@@ -33,7 +33,7 @@ register_tool(get_table_schema)
 register_tool(execute_sql_query)
 register_tool(get_load_table)
 register_tool(get_pipeline_local_state)
-register_tool(get_table_schema_changes)
+register_tool(get_table_schema_diff)
 
 try:
     from dlt_mcp._tools.search import search_docs, search_code

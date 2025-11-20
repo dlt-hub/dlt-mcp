@@ -1,29 +1,108 @@
+import unittest.mock
+
 import dlt
-from dlt_mcp._tools.core import _dict_diff, get_table_schema_changes
+
+from dlt_mcp._tools import core
 
 
-@dlt.resource(table_name="users")
-def user_data(updated_user: bool):
-    if updated_user:
-        yield [
-            {"id": 1, "name": "Alice", "email": "alice@example.com", "age": 30},
-            {"id": 2, "name": "Bob", "email": "bob@example.com", "age": 35},
-        ]
-    yield [
+def test_get_table_schema_changes_when_schema_has_changed(
+    tmp_pipeline: dlt.Pipeline,
+) -> None:
+    data_v1 = [
+        {"id": 1, "name": "Alice", "email": "alice@example.com"},
+        {"id": 2, "name": "Bob", "email": "bob@example.com"},
+    ]
+    data_v2 = [
+        {"id": 1, "name": "Alice", "email": "alice@example.com", "age": 30},
+        {"id": 2, "name": "Bob", "email": "bob@example.com", "age": 35},
+    ]
+
+    tmp_pipeline.run([data_v1], table_name="users")
+    tmp_pipeline.run([data_v2], table_name="users")
+
+    expected_diff_message = """--- Current schema
++++ Previous schema
+@@ -6,6 +6,7 @@
+              '_dlt_load_id': {'data_type': 'text',
+                               'name': '_dlt_load_id',
+                               'nullable': False},
++             'age': {'data_type': 'bigint', 'name': 'age', 'nullable': True},
+              'email': {'data_type': 'text', 'name': 'email', 'nullable': True},
+              'id': {'data_type': 'bigint', 'name': 'id', 'nullable': True},
+              'name': {'data_type': 'text', 'name': 'name', 'nullable': True}},
+    """
+
+    with unittest.mock.patch("dlt.attach", return_value=tmp_pipeline):
+        diff = core.get_table_schema_diff(
+            pipeline_name=tmp_pipeline.pipeline_name, table_name="users"
+        )
+
+    assert diff.strip() == expected_diff_message.strip()
+
+
+def test_get_table_schema_should_say_no_change(tmp_pipeline: dlt.Pipeline) -> None:
+    data_v1 = [
+        {"id": 1, "name": "Alice", "email": "alice@example.com"},
+        {"id": 2, "name": "Bob", "email": "bob@example.com"},
+    ]
+    data_v2 = data_v1
+
+    tmp_pipeline.run([data_v1], table_name="users")
+    tmp_pipeline.run([data_v2], table_name="users")
+
+    with unittest.mock.patch("dlt.attach", return_value=tmp_pipeline):
+        diff = core.get_table_schema_diff(
+            pipeline_name=tmp_pipeline.pipeline_name, table_name="users"
+        )
+
+    # Assert that there are no schema changes
+    assert diff.strip() == "There has been no change in the schema"
+
+
+def test_get_table_schema_with_same_version_hash(tmp_pipeline: dlt.Pipeline) -> None:
+    data_v1 = [
         {"id": 1, "name": "Alice", "email": "alice@example.com"},
         {"id": 2, "name": "Bob", "email": "bob@example.com"},
     ]
 
+    load_info = tmp_pipeline.run([data_v1], table_name="users")
+    version_hash = load_info.load_packages[0].schema_hash
 
-def test_get_table_schema_changes_when_schema_has_changed():
-    pipeline_name = "table_schema_change_pipeline"
-    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
+    with unittest.mock.patch("dlt.attach", return_value=tmp_pipeline):
+        diff = core.get_table_schema_diff(
+            pipeline_name=tmp_pipeline.pipeline_name,
+            table_name="users",
+            another_version_hash=version_hash,
+        )
 
-    pipeline.run(user_data(False))
-    pipeline.run(user_data(True))
+    assert diff.strip() == "There has been no change in the schema"
 
-    expected_diff_message = """--- Current Schema
-+++ Previous Schema
+
+def test_get_table_schema_with_different_version_hash(
+    tmp_pipeline: dlt.Pipeline,
+) -> None:
+    data_v1 = [
+        {"id": 1, "name": "Alice", "email": "alice@example.com"},
+        {"id": 2, "name": "Bob", "email": "bob@example.com"},
+    ]
+    data_v2 = [
+        {"id": 1, "name": "Alice", "email": "alice@example.com", "age": 30},
+        {"id": 2, "name": "Bob", "email": "bob@example.com", "age": 35},
+    ]
+
+    load_info_v1 = tmp_pipeline.run([data_v1], table_name="users")
+    version_hash_v1 = load_info_v1.load_packages[0].schema_hash
+    tmp_pipeline.run([data_v2], table_name="users")
+
+    with unittest.mock.patch("dlt.attach", return_value=tmp_pipeline):
+        diff = core.get_table_schema_diff(
+            pipeline_name=tmp_pipeline.pipeline_name,
+            table_name="users",
+            another_version_hash=version_hash_v1,
+        )
+
+    expected_diff_message = """--- Current schema
++++ Previous schema
 @@ -6,6 +6,7 @@
               '_dlt_load_id': {'data_type': 'text',
                                'name': '_dlt_load_id',
@@ -33,104 +112,20 @@ def test_get_table_schema_changes_when_schema_has_changed():
               'id': {'data_type': 'bigint', 'name': 'id', 'nullable': True},
               'name': {'data_type': 'text', 'name': 'name', 'nullable': True}},
     """
-
-    diff = get_table_schema_changes(pipeline_name, "users")
-    # Print actual and expected diff for readability in case of failure
-    assert diff.strip() == expected_diff_message.strip(), f"""
-    Expected and actual schema differences do not match.
-    
-    Expected:
-    {expected_diff_message.strip()}
-    
-    Actual:
-    {diff.strip()}
-    """
+    assert diff.strip() == expected_diff_message.strip()
 
 
-def test_get_table_schema_should_say_no_change():
-    pipeline_name = "no_change_pipeline"
-    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
-
-    # Run the resource twice with the same schema
-    pipeline.run(user_data(False))
-    pipeline.run(user_data(False))
-
-    # Get schema changes
-    diff = get_table_schema_changes(pipeline_name, "users")
-
-    # Assert that there are no schema changes
-    assert diff.strip() == "There has been no change in the schema", f"""
-    Expected no schema changes, but got:
-    {diff.strip()}
-    """
-
-
-def test_get_table_schema_with_same_version_hash():
-    pipeline_name = "same_schema_version_hash"
-    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
-
-    load_info = pipeline.run(user_data(False))
-    version_hash = load_info.load_packages[0].schema_hash
-    diff = get_table_schema_changes(pipeline_name, "users", version_hash)
-
-    assert diff.strip() == "There has been no change in the schema", f"""
-    Expected no schema changes, but got:
-    {diff.strip()}
-    """
-
-
-def test_get_table_schema_with_different_version_hash():
-    pipeline_name = "schema_time_comparison_pipeline"
-    pipeline = dlt.pipeline(pipeline_name, destination="duckdb")
-
-    load_info = pipeline.run(user_data(False))
-    version_hash = load_info.load_packages[0].schema_hash
-
-    pipeline.run(user_data(True))
-    diff = get_table_schema_changes(pipeline_name, "users", version_hash)
-
-    expected_diff_message = """--- Current Schema
-+++ Previous Schema
-@@ -6,6 +6,7 @@
-              '_dlt_load_id': {'data_type': 'text',
-                               'name': '_dlt_load_id',
-                               'nullable': False},
-+             'age': {'data_type': 'bigint', 'name': 'age', 'nullable': True},
-              'email': {'data_type': 'text', 'name': 'email', 'nullable': True},
-              'id': {'data_type': 'bigint', 'name': 'id', 'nullable': True},
-              'name': {'data_type': 'text', 'name': 'name', 'nullable': True}},
-    """
-
-    assert diff.strip() == expected_diff_message.strip(), f"""
-    Expected and actual schema differences do not match.
-    
-    Expected:
-    {expected_diff_message.strip()}
-    
-    Actual:
-    {diff.strip()}
-    """
-
-
-def test_dict_diff_when_different_dicts_are_provided():
+def test_dict_diff_different_inputs() -> None:
     expected_diff_message = (
-        "--- Current Schema\n+++ different_dict\n@@ -1 +1 @@\n-{'b': 0}+{'a': 0}"
+        "--- Current schema\n+++ different_dict\n@@ -1 +1 @@\n-{'b': 0}+{'a': 0}"
     )
-    output = _dict_diff({"a": 0}, {"b": 0}, "different_dict")
+    output = core._dict_diff({"a": 0}, {"b": 0}, "different_dict")
 
-    assert output.strip() == expected_diff_message.strip(), f"""
-    Expected and actual schema differences do not match.
-    
-    Expected:
-    {expected_diff_message.strip()}
-    
-    Actual:
-    {output.strip()}
-    """
+    assert output.strip() == expected_diff_message.strip()
 
 
-def test_dict_diff_when_same_dicts_are_provided():
+def test_dict_diff_same_inputs() -> None:
     expected_diff_message = ""
-    output = _dict_diff({"a": 0}, {"a": 0}, "same_dict")
+    output = core._dict_diff({"a": 0}, {"a": 0}, "same_dict")
 
     assert output.strip() == expected_diff_message

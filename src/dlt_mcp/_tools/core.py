@@ -3,9 +3,9 @@
 It shouldn't depend on packages that aren't installed by `dlt`
 """
 
-from difflib import unified_diff
 import json
 import pprint
+from difflib import unified_diff
 from typing import Any, Optional
 
 import dlt
@@ -73,11 +73,13 @@ def get_pipeline_local_state(pipeline_name: str) -> TPipelineState:
     return pipeline.state
 
 
-def get_table_schema_changes(
-    pipeline_name: str, table_name: str, another_version_hash: Optional[str] = None
+def get_table_schema_diff(
+    pipeline_name: str,
+    table_name: str,
+    another_version_hash: Optional[str] = None,
 ) -> str:
-    """Retrieve the diff between versions of tables compared to it's previous version"""
-    _no_change_msg = "There has been no change in the schema"
+    """Get the diff between schema versions of a table."""
+    NO_CHANGE_MSG = "There has been no change in the schema"
 
     pipeline = dlt.attach(pipeline_name)
     current_schema = pipeline.default_schema
@@ -85,45 +87,43 @@ def get_table_schema_changes(
         another_version_hash = current_schema.previous_hashes[0]
 
     if another_version_hash == current_schema.version_hash:
-        return _no_change_msg
+        return NO_CHANGE_MSG
 
     dataset = pipeline.dataset()
 
-    another_schema = (
+    results: list | None = (
         dataset.table(current_schema.version_table_name)
         .where("version_hash", "eq", another_version_hash)
         .select("schema")
     ).fetchone()
 
-    if not another_schema:
-        return _no_change_msg
+    if not results:
+        return NO_CHANGE_MSG
+
+    schema_dict = json.loads(results[0]).get("tables").get(table_name)
 
     return _dict_diff(
         current_schema.tables.get(table_name, {}),
-        _load_schema_for_table(table_name, another_schema[0]),
-        "Previous Schema",
+        schema_dict,
+        "Previous schema",
     )
-
-
-def _load_schema_for_table(table_name: str, schema: str):
-    schema_dict = json.loads(schema).get("tables").get(table_name)
-    return schema_dict
 
 
 def _dict_diff(
-    schema_dict: dict | TTableSchema,
-    another_schema_dict: dict | TTableSchema,
-    compared_to: str,
+    schema: dict | TTableSchema,
+    other_schema: dict | TTableSchema,
+    to_title: str,
+    from_title: str = "Current schema",
 ) -> str:
-    # Convert dictionaries to string representation
-    str1 = pprint.pformat(schema_dict)
-    str2 = pprint.pformat(another_schema_dict)
+    """Convert the two dictionaries to strings and compute string diff.
 
-    # Split into lines
+    Assumes the same key ordering in the two dictionaries.
+    """
+    str1 = pprint.pformat(schema)
+    str2 = pprint.pformat(other_schema)
+
     lines1 = str1.splitlines(keepends=True)
     lines2 = str2.splitlines(keepends=True)
 
-    # Generate diff
-    return "".join(
-        unified_diff(lines2, lines1, fromfile="Current Schema", tofile=compared_to)
-    )
+    diff = "".join(unified_diff(lines2, lines1, fromfile=from_title, tofile=to_title))
+    return diff
