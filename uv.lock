@@ -429,7 +429,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "chonkie", extras = ["code", "model2vec"], marker = "extra == 'search'", specifier = ">=1.4.1" },
+    { name = "chonkie", extras = ["code", "model2vec"], marker = "extra == 'search'", specifier = ">=1.4.2" },
     { name = "dlt", specifier = ">=1.17.1" },
     { name = "dlt", extras = ["duckdb"], marker = "extra == 'duckdb'", specifier = ">=1.17.1" },
     { name = "fastmcp", specifier = ">=2.11.3" },
