@@ -42,7 +42,7 @@ dev = [
 
 [project.optional-dependencies]
 search = [
-    "chonkie[code,model2vec]>=1.4.1",
+    "chonkie[code,model2vec]>=1.4.2",
     "lancedb>=0.25.3",
 ]
 
