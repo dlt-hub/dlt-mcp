@@ -45,6 +45,9 @@ search = [
     "chonkie[code,model2vec]>=1.4.2",
     "lancedb>=0.25.3",
 ]
+duckdb = [
+    "dlt[duckdb]>=1.17.1",
+]
 
 [build-system]
 requires = ["hatchling"]

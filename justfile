@@ -4,7 +4,7 @@ default:
 
 # Setup Python environment
 setup:
-    uv sync --dev --extra search
+    uv sync --dev --extra search --extra duckdb
 
 # Run pre-commit hooks
 pre-commit:

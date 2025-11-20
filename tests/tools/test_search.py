@@ -17,11 +17,6 @@ from dlt_mcp._utilities import ingestion  # noqa: E402
 from dlt_mcp._tools import search  # noqa: E402
 
 
-@pytest.fixture(scope="module")
-def module_tmp_path(tmp_path_factory) -> pathlib.Path:
-    return tmp_path_factory.mktemp("dlt-mcp_test_search")
-
-
 # this fixture must `yield` to ensure the `with patch` context is
 # preserved in the test function
 @pytest.fixture(scope="module")
