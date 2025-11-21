@@ -19,7 +19,7 @@ def register_tool(fn: FunctionType) -> FunctionType:
 from dlt_mcp._tools.core import (  # noqa: E402
     list_pipelines,
     list_tables,
-    get_table_schema,
+    get_table_schemas,
     execute_sql_query,
     get_load_table,
     get_pipeline_local_state,
@@ -29,7 +29,7 @@ from dlt_mcp._tools.core import (  # noqa: E402
 
 register_tool(list_pipelines)
 register_tool(list_tables)
-register_tool(get_table_schema)
+register_tool(get_table_schemas)
 register_tool(execute_sql_query)
 register_tool(get_load_table)
 register_tool(get_pipeline_local_state)
