@@ -28,7 +28,7 @@ _GITHUB_REPOSITORY_URL = "https://github.com/dlt-hub/dlt"
 _GITHUB_REPOSITORY_API_URL = "https://api.github.com/repos/dlt-hub/dlt"
 
 
-chonkie.logger.disable()
+chonkie.logger.disable_logging()
 
 
 @register("model2vec")
