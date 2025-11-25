@@ -24,6 +24,7 @@ from dlt_mcp._tools.core import (  # noqa: E402
     get_load_table,
     get_pipeline_local_state,
     get_table_schema_diff,
+    display_schema,
 )
 
 
@@ -42,3 +43,5 @@ try:
     register_tool(search_code)
 except ImportError:
     pass
+
+register_tool(display_schema)
