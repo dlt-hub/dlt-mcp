@@ -132,3 +132,13 @@ def _dict_diff(
 
     diff = "".join(unified_diff(lines2, lines1, fromfile=from_title, tofile=to_title))
     return diff
+
+
+def display_schema(pipeline_name: str, hide_columns: bool = False) -> str:
+    """Generate a mermaid diagram to represent the pipeline schema
+    
+    pipeline_name: name of the pipeline
+    hide_columns: when True, the columns are hidden
+    """
+    pipeline = dlt.attach(pipeline_name)
+    return pipeline.default_schema.to_mermaid(hide_columns=hide_columns)
