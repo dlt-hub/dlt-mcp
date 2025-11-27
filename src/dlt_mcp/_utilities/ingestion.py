@@ -39,7 +39,9 @@ class Model2VecEmbeddings(TextEmbeddingFunction):
         super().__init__(**kwargs)
         self._embedding_model = None
 
-    def generate_embeddings(self, texts: list[str]) -> list[np.ndarray]:
+    def generate_embeddings(
+        self, texts: list[str] | np.ndarray, *_, **__
+    ) -> list[np.ndarray | None]:
         vectors = self._load_model().encode(
             list(texts),
             max_length=None,
