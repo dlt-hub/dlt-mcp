@@ -136,7 +136,7 @@ def _dict_diff(
 
 def display_schema(pipeline_name: str, hide_columns: bool = False) -> str:
     """Generate a mermaid diagram to represent the pipeline schema
-    
+
     pipeline_name: name of the pipeline
     hide_columns: when True, the columns are hidden
     """
