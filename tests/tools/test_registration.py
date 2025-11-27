@@ -23,6 +23,7 @@ def test_expected_tools_in_all_clause():
         "search_code",
         "search_docs",
         "get_table_schema_diff",
+        "display_schema",
     ]
 
     assert len(TOOLS_REGISTRY) == len(expected_tool_names)
@@ -41,6 +42,7 @@ def test_expected_tools_are_registered():
         "search_code",
         "search_docs",
         "get_table_schema_diff",
+        "display_schema",
     ]
 
     mcp_server = create_server()
