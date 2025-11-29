@@ -56,3 +56,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
 include = ["src/dlt_mcp/**", "README.md", "LICENSE"]
+
+[tool.uv.sources]
+dlt = { git = "https://github.com/dlt-hub/dlt.git", rev = "devel" }

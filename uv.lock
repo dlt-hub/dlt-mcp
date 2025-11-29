@@ -463,7 +463,7 @@ wheels = [
 [[package]]
 name = "dlt"
 version = "1.18.2"
-source = { registry = "https://pypi.org/simple" }
+source = { git = "https://github.com/dlt-hub/dlt.git?rev=devel#f0349d7efc6726b3cf89c6726bde8b06612970ed" }
 dependencies = [
     { name = "click" },
     { name = "fsspec" },
@@ -471,7 +471,7 @@ dependencies = [
     { name = "giturlparse" },
     { name = "humanize" },
     { name = "jsonpath-ng" },
-    { name = "orjson", marker = "python_full_version >= '3.14' or sys_platform != 'emscripten'" },
+    { name = "orjson", marker = "(python_full_version >= '3.14' and platform_python_implementation == 'PyPy') or (python_full_version >= '3.14' and sys_platform == 'emscripten') or (platform_python_implementation != 'PyPy' and sys_platform != 'emscripten')" },
     { name = "packaging" },
     { name = "pathvalidate" },
     { name = "pendulum" },
@@ -491,10 +491,6 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "tzdata" },
     { name = "win-precise-time", marker = "python_full_version < '3.13' and os_name == 'nt'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/92/56/d46cc2a2b951a6e762f393ec07e775a7961c81cfc75d6428756541013fc3/dlt-1.18.2.tar.gz", hash = "sha256:e1b199202cb254cf8a862317c79eecaab9ff8c946ea174c16f06192210481707", size = 856709 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/bd/31/e6a48f91584baf9e34be7f0c4ba1bdc8e0f672599bf779b704192746efff/dlt-1.18.2-py3-none-any.whl", hash = "sha256:9a6fd5060c7bcd18c3fa76a3f3a22dbb0c8f349a5c044c207c478e4022c51743", size = 1092124 },
 ]
 
 [package.optional-dependencies]
@@ -534,15 +530,15 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "chonkie", extras = ["code", "model2vec"], marker = "extra == 'search'", specifier = ">=1.4.2" },
-    { name = "dlt", specifier = ">=1.17.1" },
-    { name = "dlt", extras = ["duckdb"], marker = "extra == 'duckdb'", specifier = ">=1.17.1" },
+    { name = "dlt", git = "https://github.com/dlt-hub/dlt.git?rev=devel" },
+    { name = "dlt", extras = ["duckdb"], marker = "extra == 'duckdb'", git = "https://github.com/dlt-hub/dlt.git?rev=devel" },
     { name = "fastmcp", specifier = ">=2.11.3" },
     { name = "lancedb", marker = "extra == 'search'", specifier = ">=0.25.3" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "dlt", extras = ["duckdb"], specifier = ">=1.17.1" },
+    { name = "dlt", extras = ["duckdb"], git = "https://github.com/dlt-hub/dlt.git?rev=devel" },
     { name = "griffe", specifier = ">=1.13.0" },
     { name = "prek", specifier = ">=0.2.10" },
     { name = "pytest", specifier = ">=8.4.1" },
