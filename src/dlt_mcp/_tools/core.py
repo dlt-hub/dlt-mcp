@@ -31,14 +31,19 @@ def list_tables(pipeline_name: str) -> list[str]:
     return schema.data_table_names()
 
 
-def get_table_schema(pipeline_name: str, table_name: str) -> TTableSchema:
-    """Get the schema of the specified table."""
+def get_table_schemas(
+    pipeline_name: str, table_names: list[str]
+) -> dict[str, TTableSchema]:
+    """Get the schema of the specified tables names from a given pipeline"""
     # TODO refactor try/except to specific line or at the tool manager level
     # the inconsistent errors are probably due to database locking
     try:
         pipeline = dlt.attach(pipeline_name)
-        table_schema = pipeline.default_schema.get_table(table_name)
-        return table_schema
+        table_schemas = {
+            table_name: pipeline.default_schema.get_table(table_name)
+            for table_name in table_names
+        }
+        return table_schemas
     except Exception:
         raise
 
@@ -46,7 +51,7 @@ def get_table_schema(pipeline_name: str, table_name: str) -> TTableSchema:
 def execute_sql_query(pipeline_name: str, sql_select_query: str) -> list[tuple]:
     f"""Executes SELECT SQL statement for simple data analysis.
 
-    Use the `{list_tables.__name__}()` and `{get_table_schema.__name__}()` tools to 
+    Use the `{list_tables.__name__}()` and `{get_table_schemas.__name__}()` tools to 
     retrieve the available tables and columns.
     """
     pipeline = dlt.attach(pipeline_name)
@@ -127,3 +132,13 @@ def _dict_diff(
 
     diff = "".join(unified_diff(lines2, lines1, fromfile=from_title, tofile=to_title))
     return diff
+
+
+def display_schema(pipeline_name: str, hide_columns: bool = False) -> str:
+    """Generate a mermaid diagram to represent the pipeline schema
+
+    pipeline_name: name of the pipeline
+    hide_columns: when True, the columns are hidden
+    """
+    pipeline = dlt.attach(pipeline_name)
+    return pipeline.default_schema.to_mermaid(hide_columns=hide_columns)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from fastmcp import FastMCP
 
+from dlt_mcp._prompts import PROMPTS_REGISTRY
 from dlt_mcp._tools import TOOLS_REGISTRY
 
 
@@ -16,6 +17,10 @@ def create_server() -> FastMCP:
         instructions="Helps you build with the dlt Python library.",
         tools=tools,  # type: ignore[invalid-argument-type]
     )
+
+    prompts = tuple(PROMPTS_REGISTRY.values())
+    for prompt in prompts:
+        server.add_prompt(prompt)
 
     return server
 
