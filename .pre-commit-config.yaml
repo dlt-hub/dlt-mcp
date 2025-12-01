@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: ty-check
         name: ty-check
-        entry: uv run ty check --exclude tests --output-format concise .
+        entry: uv run ty check --output-format concise .
         language: python
         pass_filenames: false
 
