@@ -28,4 +28,4 @@ type-check:
 
 # Run test suite
 test:
-    uv run pytest -m tests/
+    uv run pytest tests/
