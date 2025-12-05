@@ -19,7 +19,7 @@ The package manager [uv](https://docs.astral.sh/uv/getting-started/installation/
 Add this section to your MCP configuration file inside your IDE.
 
 ```json
-
+{
   "name": "dlt",
   "command": "uv",
   "args": [
