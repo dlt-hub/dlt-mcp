@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "dlt>=1.17.1",
+    "dlt>=1.19.0",
     "fastmcp>=2.11.3",
 ]
 
@@ -32,7 +32,6 @@ Issues = "https://github.com/dlt-hub/dlt-mcp/issues"
 
 [dependency-groups]
 dev = [
-    "dlt[duckdb]>=1.19.0",
     "griffe>=1.13.0",
     "prek>=0.2.10",
     "pytest>=8.4.1",
@@ -47,7 +46,7 @@ search = [
     "lancedb>=0.25.3",
 ]
 duckdb = [
-    "dlt[duckdb]>=1.17.1",
+    "dlt[duckdb]>=1.19.0",
 ]
 
 [build-system]
