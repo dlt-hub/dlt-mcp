@@ -16,7 +16,7 @@ def test_expected_tools_in_all_clause():
     expected_tool_names = [
         "list_pipelines",
         "list_tables",
-        "get_table_schemas",
+        "get_table_schema",
         "execute_sql_query",
         "get_load_table",
         "get_pipeline_local_state",
@@ -35,7 +35,7 @@ def test_expected_tools_are_registered():
     expected_tool_names = [
         "list_pipelines",
         "list_tables",
-        "get_table_schemas",
+        "get_table_schema",
         "execute_sql_query",
         "get_load_table",
         "get_pipeline_local_state",
