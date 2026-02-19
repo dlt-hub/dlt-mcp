@@ -1,17 +1,17 @@
 fail_fast: false
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.6
+    rev: v0.15.1
     hooks:
       # Run the linter
-      - id: ruff
+      - id: ruff-check
         args: [--fix]
       # Run the formatter
       - id: ruff-format
 
   # there's currently no official `ty` pre-commit hook
   # we use a `local` hook, that takes in the current
-  # directory as context. This means that CI needs to 
+  # directory as context. This means that CI needs to
   # the Python dependencies before running this check.
   # It needs all the Python deps or stubs for typing
   - repo: local
@@ -23,16 +23,15 @@ repos:
         pass_filenames: false
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-yaml
       - id: check-toml
 
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.24.1
+    rev: v0.25
     hooks:
       - id: validate-pyproject
-
 
   # - repo: local
   #   hooks:
