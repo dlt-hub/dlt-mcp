@@ -16,7 +16,7 @@ The [Model Context Protocol](https://modelcontextprotocol.io/) (MCP) server allo
 
 The package manager [uv](https://docs.astral.sh/uv/getting-started/installation/) is required to launch the MCP server.
 
-Add this section to your MCP configuration file inside your IDE.
+Add this section to your MCP configuration file inside your IDE. Add your destination(s) in the extras `dlt-mcp[...]`
 
 ```json
 {
@@ -25,7 +25,6 @@ Add this section to your MCP configuration file inside your IDE.
   "args": [
     "run",
     "--with",
-    // add destination in extras `[...]` 
     "dlt-mcp[duckdb]",
     "dlt-mcp",
   ],
