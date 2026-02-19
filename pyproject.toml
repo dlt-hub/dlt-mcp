@@ -35,6 +35,7 @@ dev = [
     "griffe>=1.13.0",
     "prek>=0.2.10",
     "pytest>=8.4.1",
+    "pytest-xdist>=3.8.0",
     "ruff>=0.12.11",
     "rust-just>=1.43.0",
     "ty==0.0.1a21",
@@ -55,3 +56,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
 include = ["src/dlt_mcp/**", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+addopts = "-n auto"
