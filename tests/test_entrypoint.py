@@ -1,14 +1,16 @@
 import subprocess
 
 import fastmcp
+import pytest
 
 import dlt_mcp.server
 
 
-def test_launch_server_via_main() -> None:
+@pytest.mark.parametrize("command", [("python", "-m", "dlt_mcp"), ("dlt-mcp",)])
+def test_launch_server_entrypoint(command: tuple[str, ...]) -> None:
     """Test that `python -m dlt_mcp` starts the MCP server"""
     mcp_server_process = subprocess.Popen(
-        ["python", "-m", "dlt_mcp"],
+        command,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
