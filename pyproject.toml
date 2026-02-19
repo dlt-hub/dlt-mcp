@@ -59,3 +59,4 @@ include = ["src/dlt_mcp/**", "README.md", "LICENSE"]
 
 [tool.pytest.ini_options]
 addopts = "-n auto"
+console_output_style = "count"
