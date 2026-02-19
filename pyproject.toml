@@ -25,6 +25,9 @@ dependencies = [
     "fastmcp>=3.0.0",
 ]
 
+[project.scripts]
+dlt-mcp = "dlt_mcp.server:start"
+
 [project.urls]
 Documentation = "https://github.com/dlt-hub/dlt-mcp#README"
 Source = "https://github.com/dlt-hub/dlt-mcp"
@@ -46,9 +49,32 @@ search = [
     "chonkie[code,model2vec]>=1.4.2",
     "lancedb>=0.25.3",
 ]
-duckdb = [
-    "dlt[duckdb]>=1.19.0",
-]
+# core destinations; alphabetical
+athena = ["dlt[athena]"]
+az = ["dlt[az]"]
+bigquery = ["dlt[bigquery]"]
+clickhouse = ["dlt[clickhouse]"]
+cli = ["dlt[cli]"]
+databricks = ["dlt[databricks]"]
+deltalake = ["dlt[deltalake]"]
+dremio = ["dlt[dremio]"]
+duckdb = ["dlt[duckdb]"]
+filesystem = ["dlt[filesystem]"]
+gcp = ["dlt[gcp]"]
+gs = ["dlt[gs]"]
+lancedb = ["dlt[lancedb]"]
+motherduck = ["dlt[motherduck]"]
+mssql = ["dlt[mssql]"]
+postgis = ["dlt[postgis]"]
+postgres = ["dlt[postgres]"]
+pyiceberg = ["dlt[pyiceberg]"]
+qdrant = ["dlt[qdrant]"]
+redshift = ["dlt[redshift]"]
+s3 = ["dlt[s3]"]
+sftp = ["dlt[sftp]"]
+snowflake = ["dlt[snowflake]"]
+synapse = ["dlt[synapse]"]
+weaviate = ["dlt[weaviate]"]
 
 [build-system]
 requires = ["hatchling"]
