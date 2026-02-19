@@ -47,7 +47,7 @@ def test_expected_tools_are_registered():
 
     mcp_server = create_server()
 
-    tools = asyncio.run(mcp_server.get_tools())
+    tools = asyncio.run(mcp_server.list_tools())
 
     assert len(tools) == len(expected_tool_names)
-    assert set(tools) == set(expected_tool_names)
+    assert set(t.name for t in tools) == set(expected_tool_names)

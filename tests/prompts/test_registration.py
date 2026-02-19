@@ -29,7 +29,7 @@ def test_expected_prompts_are_registered():
 
     mcp_server = create_server()
 
-    prompts = asyncio.run(mcp_server.get_prompts())
+    prompts = asyncio.run(mcp_server.list_prompts())
 
     assert len(prompts) == len(expected_prompt_names)
-    assert set(prompts) == set(expected_prompt_names)
+    assert set(p.name for p in prompts) == set(expected_prompt_names)
