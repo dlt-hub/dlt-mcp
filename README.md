@@ -25,10 +25,9 @@ Add this section to your MCP configuration file inside your IDE.
   "args": [
     "run",
     "--with",
-    "dlt-mcp[search]",
-    "python",
-    "-m",
-    "dlt_mcp"
+    // add destination in extras `[...]` 
+    "dlt-mcp[duckdb]",
+    "dlt-mcp",
   ],
 }
 ```

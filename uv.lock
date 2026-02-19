@@ -961,18 +961,6 @@ wheels = [
 ]
 
 [[package]]
-name = "cron-descriptor"
-version = "2.0.6"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7c/31/0b21d1599656b2ffa6043e51ca01041cd1c0f6dacf5a3e2b620ed120e7d8/cron_descriptor-2.0.6.tar.gz", hash = "sha256:e39d2848e1d8913cfb6e3452e701b5eec662ee18bea8cc5aa53ee1a7bb217157", size = 49456, upload-time = "2025-09-03T16:30:22.434Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/cc/361326a54ad92e2e12845ad15e335a4e14b8953665007fb514d3393dfb0f/cron_descriptor-2.0.6-py3-none-any.whl", hash = "sha256:3a1c0d837c0e5a32e415f821b36cf758eb92d510e6beff8fbfe4fa16573d93d6", size = 74446, upload-time = "2025-09-03T16:30:21.397Z" },
-]
-
-[[package]]
 name = "cryptography"
 version = "46.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -1210,11 +1198,6 @@ bigquery = [
     { name = "grpcio" },
     { name = "pyarrow" },
 ]
-cli = [
-    { name = "cron-descriptor" },
-    { name = "pip" },
-    { name = "pipdeptree" },
-]
 clickhouse = [
     { name = "adlfs" },
     { name = "clickhouse-connect" },
@@ -1317,9 +1300,6 @@ az = [
 bigquery = [
     { name = "dlt", extra = ["bigquery"] },
 ]
-cli = [
-    { name = "dlt", extra = ["cli"] },
-]
 clickhouse = [
     { name = "dlt", extra = ["clickhouse"] },
 ]
@@ -1406,7 +1386,6 @@ requires-dist = [
     { name = "dlt", extras = ["athena"], marker = "extra == 'athena'" },
     { name = "dlt", extras = ["az"], marker = "extra == 'az'" },
     { name = "dlt", extras = ["bigquery"], marker = "extra == 'bigquery'" },
-    { name = "dlt", extras = ["cli"], marker = "extra == 'cli'" },
     { name = "dlt", extras = ["clickhouse"], marker = "extra == 'clickhouse'" },
     { name = "dlt", extras = ["databricks"], marker = "extra == 'databricks'" },
     { name = "dlt", extras = ["deltalake"], marker = "extra == 'deltalake'" },
@@ -1431,7 +1410,7 @@ requires-dist = [
     { name = "fastmcp", specifier = ">=3.0.0" },
     { name = "lancedb", marker = "extra == 'search'", specifier = ">=0.25.3" },
 ]
-provides-extras = ["search", "athena", "az", "bigquery", "clickhouse", "cli", "databricks", "deltalake", "dremio", "duckdb", "filesystem", "gcp", "gs", "lancedb", "motherduck", "mssql", "postgis", "postgres", "pyiceberg", "qdrant", "redshift", "s3", "sftp", "snowflake", "synapse", "weaviate"]
+provides-extras = ["search", "athena", "az", "bigquery", "clickhouse", "databricks", "deltalake", "dremio", "duckdb", "filesystem", "gcp", "gs", "lancedb", "motherduck", "mssql", "postgis", "postgres", "pyiceberg", "qdrant", "redshift", "s3", "sftp", "snowflake", "synapse", "weaviate"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -3660,24 +3639,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/31/5e/03966aedfbfcbb4d5f8aa042452d3361f325b963ebbadddac05b122e47dd/pillow-11.3.0-pp311-pypy311_pp73-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:5418b53c0d59b3824d05e029669efa023bbef0f3e92e75ec8428f3799487f361", size = 4957170, upload-time = "2025-07-01T09:16:23.762Z" },
     { url = "https://files.pythonhosted.org/packages/cc/2d/e082982aacc927fc2cab48e1e731bdb1643a1406acace8bed0900a61464e/pillow-11.3.0-pp311-pypy311_pp73-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:504b6f59505f08ae014f724b6207ff6222662aab5cc9542577fb084ed0676ac7", size = 5581505, upload-time = "2025-07-01T09:16:25.593Z" },
     { url = "https://files.pythonhosted.org/packages/34/e7/ae39f538fd6844e982063c3a5e4598b8ced43b9633baa3a85ef33af8c05c/pillow-11.3.0-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:c84d689db21a1c397d001aa08241044aa2069e7587b398c8cc63020390b1c1b8", size = 6984598, upload-time = "2025-07-01T09:16:27.732Z" },
-]
-
-[[package]]
-name = "pip"
-version = "26.0.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/48/83/0d7d4e9efe3344b8e2fe25d93be44f64b65364d3c8d7bc6dc90198d5422e/pip-26.0.1.tar.gz", hash = "sha256:c4037d8a277c89b320abe636d59f91e6d0922d08a05b60e85e53b296613346d8", size = 1812747, upload-time = "2026-02-05T02:20:18.702Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/de/f0/c81e05b613866b76d2d1066490adf1a3dbc4ee9d9c839961c3fc8a6997af/pip-26.0.1-py3-none-any.whl", hash = "sha256:bdb1b08f4274833d62c1aa29e20907365a2ceb950410df15fc9521bad440122b", size = 1787723, upload-time = "2026-02-05T02:20:16.416Z" },
-]
-
-[[package]]
-name = "pipdeptree"
-version = "2.9.6"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/0a/b2/2508e11f44e0e7b136555175f21c121f20642d43ab2a09797b178e968834/pipdeptree-2.9.6.tar.gz", hash = "sha256:f815caf165e89c576ce659b866c7a82ae4590420c2d020a92d32e45097f8bc73", size = 30858, upload-time = "2023-07-14T22:34:19.07Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/41/2c/63ad89d8e01d471b91c0ad4d69ed45f5221f70f3ece6c097beecb7c67f7a/pipdeptree-2.9.6-py3-none-any.whl", hash = "sha256:de93f990d21224297c9f03e057da5a3dc65ff732a0147945dd9421671f13626b", size = 19768, upload-time = "2023-07-14T22:34:17.109Z" },
 ]
 
 [[package]]
